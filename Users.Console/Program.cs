@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 using Users.Application;
 using Users.Console;
 using Users.Persistence;
@@ -24,7 +25,12 @@ using (var scope = sp.CreateScope())
 
 var processor = sp.GetRequiredService<UserUpdatesProcessor>();
 
+var stopwatch = new Stopwatch();
 using (var reader = new StreamReader(path))
 {
+    stopwatch.Start();
     await processor.Process(reader);
+    stopwatch.Stop();
 }
+Console.WriteLine($"Processed in {stopwatch.ElapsedMilliseconds} ms.");
+Console.WriteLine();
